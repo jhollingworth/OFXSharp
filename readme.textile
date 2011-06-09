@@ -1,5 +1,7 @@
 h1. How to use
 
-@var parser = new OFXDocumentParser();@
-@var ofxDocument = parser.Import(new FileStream(@"c:\ofxdoc.ofx", FileMode.Open));@
+<pre>
+var parser = new OFXDocumentParser();
+var ofxDocument = parser.Import(new FileStream(@"c:\ofxdoc.ofx", FileMode.Open));
+</pre>
 
