@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Sgml;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Xml;
-using Sgml;
 
 namespace OFXSharp
 {
@@ -28,74 +30,88 @@ namespace OFXSharp
          {
             ofxString = SGMLToXML(ofxString);
          }
-
          return Parse(ofxString);
       }
 
       private OFXDocument Parse(string ofxString)
       {
-         var ofx = new OFXDocument {AccType = GetAccountType(ofxString)};
+          var ofx = new OFXDocument {AccType = GetAccountType(ofxString)};
+
+          ofx.Statements = new List<OFXStatement>();
 
          //Load into xml document
-         var doc = new XmlDocument();
-         doc.Load(new StringReader(ofxString));
+         var xml = new XmlDocument();
+         xml.Load(new StringReader(ofxString));
 
-         var currencyNode = doc.SelectSingleNode(GetXPath(ofx.AccType, OFXSection.CURRENCY));
+          // need to parse this for multiple banks
+         // xpath = ofx/CREDITCARDMSGSRSV1/CCSTMTTRNRS      --  /CCSTMTRS
+         // xpath = ofx/BANKMSGSRSV1/STMTTRNRS              --  /STMTRS
+         var STMTTRNRS = xml.SelectNodes(GetXPath(ofx.AccType, OFXSection.STATEMENTS));
 
-         if (currencyNode != null)
+         foreach (XmlNode doc in STMTTRNRS)
          {
-            ofx.Currency = currencyNode.FirstChild.Value;
-         }
-         else
-         {
-            throw new OFXParseException("Currency not found");
-         }
+             OFXStatement ofxStatement = new OFXStatement();
 
-         //Get sign on node from OFX file
-         var signOnNode = doc.SelectSingleNode(Resources.SignOn);
+             var currencyNode = doc.SelectSingleNode(GetRelativeXPath(ofx.AccType, OFXSection.CURRENCY));
 
-         //If exists, populate signon obj, else throw parse error
-         if (signOnNode != null)
-         {
-            ofx.SignOn = new SignOn(signOnNode);
+             if (currencyNode != null)
+             {
+                 ofxStatement.Currency = currencyNode.FirstChild.Value;
+             }
+             else
+             {
+                 throw new OFXParseException("Currency not found");
+             }
+
+             //Get sign on node from OFX file
+             var signOnNode = xml.SelectSingleNode(Resources.SignOn);
+
+             //If exists, populate signon obj, else throw parse error
+             if (signOnNode != null)
+             {
+                 ofxStatement.SignOn = new SignOn(signOnNode);
+             }
+             else
+             {
+                 throw new OFXParseException("Sign On information not found");
+             }
+
+             //Get Account information for ofx doc
+             var accountNode = doc.SelectSingleNode(GetRelativeXPath(ofx.AccType, OFXSection.ACCOUNTINFO));
+
+             //If account info present, populate account object
+             if (accountNode != null)
+             {
+                 ofxStatement.Account = new Account(accountNode, ofx.AccType);
+             }
+             else
+             {
+                 throw new OFXParseException("Account information not found");
+             }
+
+             //Get list of transactions
+             ImportTransations(ofxStatement, doc, ofx);
+
+             //Get balance info from ofx doc
+             var ledgerNode = doc.SelectSingleNode(GetRelativeXPath(ofx.AccType, OFXSection.LEDGERBAL));
+             var avaliableNode = doc.SelectSingleNode(GetRelativeXPath(ofx.AccType, OFXSection.AVAILBAL));
+
+             //If balance info present, populate balance object
+             // ***** OFX files from my bank don't have the 'avaliableNode' node, so i manage a 'null' situation
+             if (ledgerNode != null) // && avaliableNode != null
+             {
+                 ofxStatement.Balance = new Balance(ledgerNode, avaliableNode);
+             }
+             else
+             {
+                 throw new OFXParseException("Balance information not found");
+             }
+
+             ofx.Statements.Add(ofxStatement);
          }
-         else
-         {
-            throw new OFXParseException("Sign On information not found");
-         }
-
-         //Get Account information for ofx doc
-         var accountNode = doc.SelectSingleNode(GetXPath(ofx.AccType, OFXSection.ACCOUNTINFO));
-
-         //If account info present, populate account object
-         if (accountNode != null)
-         {
-            ofx.Account = new Account(accountNode, ofx.AccType);
-         }
-         else
-         {
-            throw new OFXParseException("Account information not found");
-         }
-
-         //Get list of transactions
-         ImportTransations(ofx, doc);
-
-         //Get balance info from ofx doc
-         var ledgerNode = doc.SelectSingleNode(GetXPath(ofx.AccType, OFXSection.BALANCE) + "/LEDGERBAL");
-         var avaliableNode = doc.SelectSingleNode(GetXPath(ofx.AccType, OFXSection.BALANCE) + "/AVAILBAL");
-
-         //If balance info present, populate balance object
-         // ***** OFX files from my bank don't have the 'avaliableNode' node, so i manage a 'null' situation
-         if (ledgerNode != null) // && avaliableNode != null
-         {
-            ofx.Balance = new Balance(ledgerNode, avaliableNode);
-         }
-         else
-         {
-            throw new OFXParseException("Balance information not found");
-         }
-
+          
          return ofx;
+
       }
 
 
@@ -107,37 +123,80 @@ namespace OFXSharp
       /// <exception cref="OFXException">Thrown in account type not supported</exception>
       private string GetXPath(AccountType type, OFXSection section)
       {
-         string xpath, accountInfo;
+          string xpath, accountInfo;
 
-         switch (type)
-         {
-            case AccountType.BANK:
-               xpath = Resources.BankAccount;
-               accountInfo = "/BANKACCTFROM";
-               break;
-            case AccountType.CC:
-               xpath = Resources.CCAccount;
-               accountInfo = "/CCACCTFROM";
-               break;
-            default:
-               throw new OFXException("Account Type not supported. Account type " + type);
-         }
+          switch (type)
+          {
+              case AccountType.BANK:
+                  xpath = Resources.BankAccount;
+                  accountInfo = "/BANKACCTFROM";
+                  break;
+              case AccountType.CC:
+                  xpath = Resources.CCAccount;
+                  accountInfo = "/CCACCTFROM";
+                  break;
+              default:
+                  throw new OFXException("Account Type not supported. Account type " + type);
+          }
 
-         switch (section)
-         {
-            case OFXSection.ACCOUNTINFO:
-               return xpath + accountInfo;
-            case OFXSection.BALANCE:
-               return xpath;
-            case OFXSection.TRANSACTIONS:
-               return xpath + "/BANKTRANLIST";
-            case OFXSection.SIGNON:
-               return Resources.SignOn;
-            case OFXSection.CURRENCY:
-               return xpath + "/CURDEF";
-            default:
-               throw new OFXException("Unknown section found when retrieving XPath. Section " + section);
-         }
+          switch (section)
+          {
+              case OFXSection.ACCOUNTINFO:
+                  return xpath + accountInfo;
+              case OFXSection.BALANCE:
+                  return xpath;
+              case OFXSection.TRANSACTIONS:
+                  return xpath + "/BANKTRANLIST";
+              case OFXSection.SIGNON:
+                  return Resources.SignOn;
+              case OFXSection.CURRENCY:
+                  return xpath + "/CURDEF";
+              case OFXSection.STATEMENTS:
+                  return xpath;
+              default:
+                  throw new OFXException("Unknown section found when retrieving XPath. Section " + section);
+          }
+      }
+
+      /// <summary>
+      /// Returns the correct xpath to specified section for given account type
+      /// </summary>
+      /// <param name="type">Account type</param>
+      /// <param name="section">Section of OFX document, e.g. Transaction Section</param>
+      /// <exception cref="OFXException">Thrown in account type not supported</exception>
+      private string GetRelativeXPath(AccountType type, OFXSection section)
+      {
+          string xpath, accountInfo;
+
+          switch (type)
+          {
+              case AccountType.BANK:
+                  xpath = Resources.BankAccount;
+                  accountInfo = "BANKACCTFROM";
+                  break;
+              case AccountType.CC:
+                  xpath = Resources.CCAccount;
+                  accountInfo = "CCACCTFROM";
+                  break;
+              default:
+                  throw new OFXException("Account Type not supported. Account type " + type);
+          }
+
+          switch (section)
+          {
+              case OFXSection.ACCOUNTINFO:
+                  return accountInfo;
+              case OFXSection.TRANSACTIONS:
+                  return "BANKTRANLIST";
+              case OFXSection.CURRENCY:
+                  return "CURDEF";
+              case OFXSection.LEDGERBAL:
+                  return "LEDGERBAL";
+              case OFXSection.AVAILBAL:
+                  return "AVAILBAL"; // 
+              default:
+                  throw new OFXException("Unknown section found when retrieving XPath. Section " + section);
+          }
       }
 
       /// <summary>
@@ -145,19 +204,19 @@ namespace OFXSharp
       /// </summary>
       /// <param name="doc">OFX document</param>
       /// <returns>List of transactions found in OFX document</returns>
-      private void ImportTransations(OFXDocument ofxDocument, XmlDocument doc)
+      private void ImportTransations(OFXStatement ofxStatement, XmlNode doc, OFXDocument ofxDocument)
       {
-         var xpath = GetXPath(ofxDocument.AccType, OFXSection.TRANSACTIONS);
+         var xpath = GetRelativeXPath(ofxDocument.AccType, OFXSection.TRANSACTIONS);
 
-         ofxDocument.StatementStart = doc.GetValue(xpath + "/DTSTART").ToDate();
-         ofxDocument.StatementEnd = doc.GetValue(xpath + "/DTEND").ToDate();
+         ofxStatement.StatementStart = doc.GetValue(xpath + "/DTSTART").ToDate();
+         ofxStatement.StatementEnd = doc.GetValue(xpath + "/DTEND").ToDate();
 
          var transactionNodes = doc.SelectNodes(xpath + "/STMTTRN");
 
-         ofxDocument.Transactions = new List<Transaction>();
+         ofxStatement.Transactions = new List<Transaction>();
 
          foreach (XmlNode node in transactionNodes)
-            ofxDocument.Transactions.Add(new Transaction(node, ofxDocument.Currency));
+             ofxStatement.Transactions.Add(new Transaction(node, ofxStatement.Currency));
       }
 
 
@@ -194,26 +253,69 @@ namespace OFXSharp
       /// <returns>OFX File in XML format</returns>
       private string SGMLToXML(string file)
       {
-         var reader = new SgmlReader();
+          var reader = new SgmlReader();
 
-         //Inititialize SGML reader
-         reader.InputStream = new StringReader(ParseHeader(file));
-         reader.DocType = "OFX";
+          object msgBody = reader.NameTable.Add("MSGBODY");
+          //Inititialize SGML reader
+          reader.InputStream = new StringReader(ParseHeader(file));
+          reader.DocType = "OFX";
 
-         var sw = new StringWriter();
-         var xml = new XmlTextWriter(sw);
+          var sw = new StringWriter();
+          var writer = new XmlTextWriter(sw);
+          // Root.
+          writer.WriteStartDocument();
 
-         //write output of sgml reader to xml text writer
-         while (!reader.EOF)
-            xml.WriteNode(reader, true);
+          object previousElement = null;
+          Stack elementsWeAlreadyEnded = new Stack();
 
-         //close xml text writer
-         xml.Flush();
-         xml.Close();
+          while (reader.Read())
+          {
+              switch (reader.NodeType)
+              {
+                  case XmlNodeType.Element:
+                      previousElement = reader.LocalName;
+                      writer.WriteStartElement(reader.LocalName);
+                      break;
+                  case XmlNodeType.Text:
+                      if (String.IsNullOrEmpty(reader.Value) == false)
+                      {
+                          writer.WriteString(reader.Value.Trim());
+                          if (previousElement != null && !previousElement.Equals(msgBody))
+                          {
+                              writer.WriteEndElement();
+                              elementsWeAlreadyEnded.Push(previousElement);
+                          }
+                      }
+                      else Debug.Assert(true, "big problems?");
+                      break;
+                  case XmlNodeType.EndElement:
+                      if (elementsWeAlreadyEnded.Count > 0
+                          && Object.ReferenceEquals(elementsWeAlreadyEnded.Peek(),
+                             reader.LocalName))
+                      {
+                          elementsWeAlreadyEnded.Pop();
+                      }
+                      else
+                      {
+                          writer.WriteEndElement();
+                      }
+                      break;
+                  default:
+                      // doing nothing as below reads in the next node as well as writing (hence it gets missed on a blank line)
+                      //writer.WriteNode(reader, false);
+                      break;
+              }
+          }
 
-         var temp = sw.ToString().TrimStart().Split(new[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
+          //close xml text writer
+          writer.WriteEndDocument();
+          writer.Flush();
+          writer.Close();
+          //*/
 
-         return String.Join("", temp);
+          var temp = sw.ToString().TrimStart().Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+          return String.Join("", temp);
       }
 
       /// <summary>
@@ -278,7 +380,10 @@ namespace OFXSharp
          ACCOUNTINFO,
          TRANSACTIONS,
          BALANCE,
-         CURRENCY
+         CURRENCY, 
+         STATEMENTS,
+         LEDGERBAL,
+         AVAILBAL
       }
 
       #endregion

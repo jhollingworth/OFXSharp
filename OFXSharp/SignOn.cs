@@ -7,7 +7,8 @@ namespace OFXSharp
     {
         public string StatusSeverity { get; set; }
 
-        public Int64 DTServer { get; set; }
+        //public Int64 DTServer { get; set; }
+        public string DTServer { get; set; }
 
         public int StatusCode { get; set; }
 
@@ -19,7 +20,8 @@ namespace OFXSharp
         {
             StatusCode = Convert.ToInt32(node.GetValue("STATUS/CODE"));
             StatusSeverity = node.GetValue("STATUS/SEVERITY");
-            DTServer = Convert.ToInt64(node.GetValue("DTSERVER"));
+            //DTServer = Convert.ToInt64(node.GetValue("DTSERVER"));
+            DTServer = node.GetValue("DTSERVER");
             Language = node.GetValue("LANGUAGE");
             IntuBid = node.GetValue("INTU.BID");
         }
