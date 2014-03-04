@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("OFXSharp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("C# OFX file parser")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("Antonio Milesi Bastos")]
+[assembly: AssemblyCopyright("Copyright © milesibastos.com 2014")]
 [assembly: AssemblyProduct("Importer")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.4000")]
+[assembly: AssemblyInformationalVersion("1.0.4000")]
+[assembly: AssemblyVersion("1.0.0")]
