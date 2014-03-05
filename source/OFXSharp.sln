@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{4456DF
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OFXSharp.Tests", "OFXSharp.Tests\OFXSharp.Tests.csproj", "{4753DE21-42DB-405F-BB2A-A3F189A62482}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7BBA813D-EE93-491A-B0C7-FBD588E393CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BBA813D-EE93-491A-B0C7-FBD588E393CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BBA813D-EE93-491A-B0C7-FBD588E393CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4753DE21-42DB-405F-BB2A-A3F189A62482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4753DE21-42DB-405F-BB2A-A3F189A62482}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4753DE21-42DB-405F-BB2A-A3F189A62482}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4753DE21-42DB-405F-BB2A-A3F189A62482}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

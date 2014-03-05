@@ -39,8 +39,8 @@ namespace OFXSharp
         {
             AccountType = type;
 
-            AccountID = node.GetValue("ACCTID");
-            AccountKey = node.GetValue("ACCTKEY");
+            AccountID = node.GetValue("//ACCTID");
+            AccountKey = node.GetValue("//ACCTKEY");
 
             switch (AccountType)
             {
@@ -63,11 +63,11 @@ namespace OFXSharp
         /// </summary>
         private void InitializeBank(XmlNode node)
         {
-            BankID = node.GetValue("BANKID");
-            BranchID = node.GetValue("BRANCHID");
+            BankID = node.GetValue("//BANKID");
+            BranchID = node.GetValue("//BRANCHID");
 
             //Get Bank Account Type from XML
-            string bankAccountType = node.GetValue("ACCTTYPE");
+            string bankAccountType = node.GetValue("//ACCTTYPE");
 
             //Check that it has been set
             if (String.IsNullOrEmpty(bankAccountType))

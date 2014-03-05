@@ -1,0 +1,78 @@
+OFXHEADER:100
+DATA:OFXSGML
+VERSION:102
+SECURITY:NONE
+ENCODING:USASCII
+CHARSET:1252
+COMPRESSION:NONE
+OLDFILEUID:NONE
+NEWFILEUID:NONE
+
+<OFX>
+    <SIGNONMSGSRSV1>
+        <SONRS>
+            <STATUS>
+                <CODE>0
+                <SEVERITY>INFO
+            </STATUS>
+            <DTSERVER>20140203182251[-3:GMT]
+            <LANGUAGE>ENG
+            <FI>
+                <ORG>SANTANDER
+                <FID>SANTANDER
+            </FI>
+        </SONRS>
+    </SIGNONMSGSRSV1>
+    <BANKMSGSRSV1>
+        <STMTTRNRS>
+            <TRNUID>1
+            <STATUS>
+                <CODE>0
+                <SEVERITY>INFO
+            </STATUS>
+            <STMTRS>
+                <CURDEF>BRL
+                <BANKACCTFROM>
+                    <BANKID>033
+                    <ACCTID>9999999999999
+                    <ACCTTYPE>CHECKING
+                </BANKACCTFROM>
+                <BANKTRANLIST>
+                    <DTSTART>20140203182251[-3:GMT]
+                    <DTEND>20140203182251[-3:GMT]
+                    <STMTTRN>
+                        <TRNTYPE>OTHER
+                        <DTPOSTED>20131107000000[-3:GMT]
+                        <TRNAMT>            -11.11
+                        <FITID>00510367
+                        <CHECKNUM>00510367
+                        <PAYEEID>0
+                        <MEMO>DEBITO VISA ELECTRON BRASIL        
+                    </STMTTRN>
+                    <STMTTRN>
+                        <TRNTYPE>OTHER
+                        <DTPOSTED>20131107000000[-3:GMT]
+                        <TRNAMT>           -222,22
+                        <FITID>00000105
+                        <CHECKNUM>00000105
+                        <PAYEEID>0
+                        <MEMO>COMPENSACAO INTERNA DE CHEQUE                               
+                    </STMTTRN>
+                    <STMTTRN>
+                        <TRNTYPE>OTHER
+                        <DTPOSTED>20131108000000[-3:GMT]
+                        <TRNAMT>            -333.33
+                        <FITID>00330867
+                        <CHECKNUM>00330867
+                        <PAYEEID>0
+                        <MEMO>DEBITO VISA ELECTRON BRASIL    
+                    </STMTTRN>
+                </BANKTRANLIST>
+                <LEDGERBAL>
+                    <BALAMT>           9999.99
+                    <DTASOF>20140203182251[-3:GMT]
+                </LEDGERBAL>
+            </STMTRS>
+        </STMTTRNRS>
+    </BANKMSGSRSV1>
+</OFX>
