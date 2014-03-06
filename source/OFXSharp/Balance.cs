@@ -16,7 +16,7 @@ namespace OFXSharp
 
       public Balance(XmlNode ledgerNode, XmlNode avaliableNode)
       {
-         var tempLedgerBalance = ledgerNode.GetValue("BALAMT");
+         var tempLedgerBalance = ledgerNode.GetValue("//BALAMT");
 
          if (!String.IsNullOrEmpty(tempLedgerBalance))
          {
@@ -47,7 +47,7 @@ namespace OFXSharp
          }
          else
          {
-            var tempAvaliableBalance = avaliableNode.GetValue("BALAMT");
+            var tempAvaliableBalance = avaliableNode.GetValue("//BALAMT");
 
             if (!String.IsNullOrEmpty(tempAvaliableBalance))
             {
@@ -58,10 +58,10 @@ namespace OFXSharp
             {
                throw new OFXParseException("Avaliable balance has not been set");
             }
-            AvaliableBalanceDate = avaliableNode.GetValue("DTASOF").ToDate();
+            AvaliableBalanceDate = avaliableNode.GetValue("//DTASOF").ToDate();
          }
 
-         LedgerBalanceDate = ledgerNode.GetValue("DTASOF").ToDate();
+         LedgerBalanceDate = ledgerNode.GetValue("//DTASOF").ToDate();
       }
    }
 }
