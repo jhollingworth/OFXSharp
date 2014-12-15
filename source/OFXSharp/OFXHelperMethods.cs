@@ -50,7 +50,12 @@ namespace OFXSharp
       public static string GetValue(this XmlNode node, string xpath)
       {
          var tempNode = node.SelectSingleNode(xpath);
-         return tempNode != null ? tempNode.FirstChild.Value : "";
+
+         if (tempNode != null && tempNode.FirstChild != null)
+         {
+             return tempNode.FirstChild.Value;
+         }
+         return String.Empty;
       }
    }
 }
