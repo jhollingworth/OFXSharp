@@ -12,7 +12,15 @@ namespace OFXSharp
       /// <returns>AccountInfo</returns>
       public static BankAccountType GetBankAccountType(this string bankAccountType)
       {
-         return (BankAccountType) Enum.Parse(typeof (BankAccountType), bankAccountType);
+          try
+          {
+              return (BankAccountType)Enum.Parse(typeof(BankAccountType), bankAccountType, true);
+          }
+          catch (Exception)
+          {
+
+              return BankAccountType.NA;
+          }  
       }
 
       /// <summary>
