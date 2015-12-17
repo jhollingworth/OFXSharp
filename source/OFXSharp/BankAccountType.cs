@@ -13,5 +13,7 @@ namespace OFXSharp
         [Description("Line of Credit")]
         CREDITLINE,
         NA,
+        [Description("Home Loan")]
+        HOMELOAN,
     }
 }
