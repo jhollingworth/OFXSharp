@@ -121,7 +121,7 @@
     <value>OFX/BANKMSGSRSV1/STMTTRNRS/</value>
   </data>
   <data name="CCAccount" xml:space="preserve">
-    <value>OFX/CREDITCARDMSGSRSV1/CCSTMTTRNRS/CCSTMTRS</value>
+    <value>OFX/CREDITCARDMSGSRSV1/CCSTMTTRNRS/</value>
   </data>
   <data name="InsufficentFunds" xml:space="preserve">
     <value>There are insufficent funds to pay your {item}. We have allocated what you have evenly between the {item} but there is no room in the budget for anything else, sorry...</value>
