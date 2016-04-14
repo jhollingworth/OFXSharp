@@ -98,9 +98,9 @@ namespace OFXSharp
 
          //If senders bank/credit card details avaliable, add
          if (NodeExists(node, ".//BANKACCTTO"))
-            TransactionSenderAccount = new Account(node.SelectSingleNode(".//BANKACCTTO"), AccountType.BANK);
+            TransactionSenderAccount = new Account(node.SelectSingleNode(".//BANKACCTTO"), AccountType.Bank);
          else if (NodeExists(node, ".//CCACCTTO"))
-            TransactionSenderAccount = new Account(node.SelectSingleNode(".//CCACCTTO"), AccountType.CC);
+            TransactionSenderAccount = new Account(node.SelectSingleNode(".//CCACCTTO"), AccountType.CreditCard);
       }
 
       /// <summary>
