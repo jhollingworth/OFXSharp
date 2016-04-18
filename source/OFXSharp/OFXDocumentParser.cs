@@ -8,7 +8,7 @@ namespace OFXSharp
 {
     public class OFXDocumentParser
     {
-        public OFXDocument Import(FileStream stream)
+        public OFXDocument Import(Stream stream)
         {
             using (var reader = new StreamReader(stream))
             {

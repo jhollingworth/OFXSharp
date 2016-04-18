@@ -58,6 +58,8 @@ namespace OFXSharp
             }
         }
 
+        public Account() { }
+
         /// <summary>
         /// Initializes information specific to bank
         /// </summary>

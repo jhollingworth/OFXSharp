@@ -23,5 +23,7 @@ namespace OFXSharp
             FinancialInstitutionName = node.GetValue(".//ORG");
             FinancialInstitutionId = node.GetValue(".//FID");
         }
+
+        public SignOn() { }
     }
 }

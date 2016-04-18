@@ -63,5 +63,7 @@ namespace OFXSharp
 
          LedgerBalanceDate = ledgerNode.GetValue(".//DTASOF").ToDate();
       }
+
+      public Balance() { }
    }
 }
