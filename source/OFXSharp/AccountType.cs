@@ -5,13 +5,13 @@ namespace OFXSharp
     public enum AccountType
     {
         [Description("Bank Account")]
-        BANK,
+        Bank,
         [Description("Credit Card")]
-        CC,
+        CreditCard,
         [Description("Accounts Payable")]
-        AP,
+        AccountsPayable,
         [Description("Accounts Recievable")]
-        AR,
+        AccountsReceivable,
         NA,
     }
 }

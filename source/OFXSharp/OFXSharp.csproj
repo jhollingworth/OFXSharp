@@ -80,6 +80,7 @@
     <Compile Include="OFXDocument.cs" />
     <Compile Include="Account.cs" />
     <Compile Include="Balance.cs" />
+    <Compile Include="Statement.cs" />
     <Compile Include="OFXTransactionType.cs" />
     <Compile Include="OFXParseException.cs" />
     <Compile Include="SignOn.cs" />

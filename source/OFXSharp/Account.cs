@@ -22,14 +22,14 @@ namespace OFXSharp
         {
             get
             {
-                if (AccountType == AccountType.BANK)
+                if (AccountType == AccountType.Bank)
                     return _BankAccountType;
                 
                 return BankAccountType.NA;
             }
             set 
             {
-                _BankAccountType = AccountType == AccountType.BANK ? value : BankAccountType.NA;
+                _BankAccountType = AccountType == AccountType.Bank ? value : BankAccountType.NA;
             }
         }
 
@@ -39,18 +39,18 @@ namespace OFXSharp
         {
             AccountType = type;
 
-            AccountID = node.GetValue("//ACCTID");
-            AccountKey = node.GetValue("//ACCTKEY");
+            AccountID = node.GetValue(".//ACCTID");
+            AccountKey = node.GetValue(".//ACCTKEY");
 
             switch (AccountType)
             {
-                case AccountType.BANK:
+                case AccountType.Bank:
                     InitializeBank(node);
                     break;
-                case AccountType.AP:
+                case AccountType.AccountsPayable:
                     InitializeAP(node);
                     break;
-                case AccountType.AR:
+                case AccountType.AccountsReceivable:
                     InitializeAR(node);
                     break;
                 default:
@@ -58,16 +58,18 @@ namespace OFXSharp
             }
         }
 
+        public Account() { }
+
         /// <summary>
         /// Initializes information specific to bank
         /// </summary>
         private void InitializeBank(XmlNode node)
         {
-            BankID = node.GetValue("//BANKID");
-            BranchID = node.GetValue("//BRANCHID");
+            BankID = node.GetValue(".//BANKID");
+            BranchID = node.GetValue(".//BRANCHID");
 
             //Get Bank Account Type from XML
-            string bankAccountType = node.GetValue("//ACCTTYPE");
+            string bankAccountType = node.GetValue(".//ACCTTYPE");
 
             //Check that it has been set
             if (String.IsNullOrEmpty(bankAccountType))
