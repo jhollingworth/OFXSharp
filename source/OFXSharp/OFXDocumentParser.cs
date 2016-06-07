@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Sgml;
+using System.Text;
 
 namespace OFXSharp
 {
@@ -10,7 +11,7 @@ namespace OFXSharp
    {
       public OFXDocument Import(FileStream stream)
       {
-         using (var reader = new StreamReader(stream))
+         using (var reader = new StreamReader(stream, Encoding.Default))
          {
             return Import(reader.ReadToEnd());
          }
