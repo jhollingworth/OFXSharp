@@ -61,9 +61,13 @@ namespace OFXSharp
 
          if (tempNode != null && tempNode.FirstChild != null)
          {
-             return tempNode.FirstChild.Value;
+            var ret = tempNode.FirstChild.Value;
+            if (TrimValues)
+               return ret?.Trim();
+            return ret;
          }
          return String.Empty;
       }
+      public static bool TrimValues;
    }
 }
