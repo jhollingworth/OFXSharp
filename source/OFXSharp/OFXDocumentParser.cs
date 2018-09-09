@@ -234,7 +234,7 @@ namespace OFXSharp
          CheckHeader(header);
 
          //Remove header
-         return file.Substring(file.IndexOf('<') - 1);
+         return file.Substring(file.IndexOf('<')).Trim();
       }
 
       /// <summary>
