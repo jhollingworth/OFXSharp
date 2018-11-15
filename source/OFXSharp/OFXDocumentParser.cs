@@ -234,7 +234,7 @@ namespace OFXSharp
          CheckHeader(header);
 
          //Remove header
-         return file.Substring(file.IndexOf('<') - 1);
+         return file.Substring(file.IndexOf('<')).Trim();
       }
 
       /// <summary>
@@ -243,6 +243,8 @@ namespace OFXSharp
       /// <param name="header">Header of OFX file in array</param>
       private void CheckHeader(string[] header)
       {
+		if (header[0] == "OFXHEADER:100DATA:OFXSGMLVERSION:102SECURITY:NONEENCODING:USASCIICHARSET:1252COMPRESSION:NONEOLDFILEUID:NONENEWFILEUID:NONE")//non delimited header
+			return;
          if (header[0] != "OFXHEADER:100")
             throw new OFXParseException("Incorrect header format");
 
