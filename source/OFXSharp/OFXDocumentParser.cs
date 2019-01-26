@@ -46,7 +46,10 @@ namespace OFXSharp
          if (currencyNode != null)
          {
             ofx.Currency = currencyNode.FirstChild.Value;
-         }
+            if (OFXHelperMethods.TrimValues)
+              ofx.Currency = ofx.Currency.Trim();
+
+       }
          else
          {
             throw new OFXParseException("Currency not found");
